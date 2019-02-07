@@ -1,8 +1,9 @@
 #  calanus_diapause_depth 
 
-<b>R code and data file for analyses of <i>Calanus</i> depth distribution during diapause.</b>
+<b>R source code and data for analyses of <i>Calanus</i> depth distribution during diapause.</b>
 
 <b>all.dat.rda</b>: R-data file with pan-arctic abundance data of <i>Calanus glacialis</i> and <i>Calanus hyperboreus</i> compiled from multiple sources.<br>
+
 The following information is included (column number):<br>
 #1: Sampling year<br>
 #2: Sampling month<br>
@@ -25,8 +26,8 @@ The following information is included (column number):<br>
 #47-60: Depth-specific abundance data (columns 13-26) corrected for body width/mesh size ratio<br>
 
 
-<b>analyses_calanus_depth.r</b>: R-script for describing and analyzing the compiled <i>Calanus</i> data in all.dat.rda, with focus on depth distribution during diapause.
+<b>analyses_calanus_depth.r</b>: R-script for analyses of <i>Calanus</i> depth distribution.
 
 Additional files:<br>
-<b>data_sources.pdf</b>: List of all <i>Calanus</i> data sources with relevant references (if available) and temporal and spatial data coverage.<br>
+<b>data_sources.pdf</b>: List of data sources with relevant references (if available) and temporal and spatial data coverage.<br>
 <b>data_sources.pdf</b>: R-script to plot polar-centered maps.
