@@ -30,4 +30,4 @@ The following information is included (column number):<br>
 
 Additional files:<br>
 <b>data_sources.pdf</b>: List of data sources with relevant references (if available) and temporal and spatial data coverage.<br>
-<b>data_sources.pdf</b>: R-script to plot polar-centered maps.
+<b>arcticmap.r</b>: R-script to plot polar-centered maps.
