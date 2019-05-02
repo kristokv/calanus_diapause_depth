@@ -30,36 +30,36 @@ lowbot<-c(200,400,800,5000)
 cols<- rev(c("#225ea8","#41b6c4","#a1dab4","#ffffcc"))
 vals<-NULL
 
-layout(matrix(c(1:2,5,3:5),nrow=3,byrow=FALSE),heights=c(0.43,0.43,0.14))
+layout(matrix(c(1:2,5,3:5),nrow=3,byrow=FALSE),heights=c(0.45,0.45,0.1))
 par(mgp=c(3,0,0),mar=rep(0,4),oma=c(0,0,1,0))
 for(species in c("gla","hyp")){
   #1. Plot full dataset:
   subdat<-all_dat[all_dat$month>=9 | all_dat$month<=4,] #winter data
-  subdat$tot_abun<-subda4t[,paste0("C",species,"_abunm3")]
+  subdat$tot_abun<-subdat[,paste0("C",species,"_abunm3")]
   arcticmap(add=F,map_labels = F,map_grid = F,col="grey")
   if(species=="gla"){mtext(side=3,"C. glacialis",line=-1,font=3);
-    mtext(side=3,"A",adj=0.1,line=-1,font = 2)}
+    mtext(side=3,"A.",adj=0.1,line=-1,font = 2)}
   if(species=="hyp"){mtext(side=3,"C. hyperboreus",line=-1,font=3);
-    mtext(side=3,"B",adj=0.1,line=-1,font = 2) }
+    mtext(side=3,"B.",adj=0.1,line=-1,font = 2) }
   for(bot in 1:length(upbot)){ #one column per depth layer
-     subdat_dep<-subdat[subdat$depth>=upbot[bot] & subdat$depth<lowbot[bot] & subdat$tot_abun>0,]
-     vals<-c(vals,range(log(subdat_dep$tot_abun+1)))
-     with(mapproject(subdat_dep$lon,subdat_dep$lat,proj_str,parameters=proj_params,orientation=c(90, 0, rotation)),
-     points(x,y,pch=21,lwd=0.25,bg=adjustcolor(cols[bot],alpha=0.4),cex=0.3*log(subdat_dep$tot_abun+1)))
-    }
+    subdat_dep<-subdat[subdat$depth>=upbot[bot] & subdat$depth<lowbot[bot] & subdat$tot_abun>0,]
+    vals<-c(vals,range(log(subdat_dep$tot_abun+1)))
+    with(mapproject(subdat_dep$lon,subdat_dep$lat,proj_str,parameters=proj_params,orientation=c(90, 0, rotation)),
+         points(x,y,pch=21,lwd=0.25,bg=adjustcolor(cols[bot],alpha=0.4),cex=0.3*log(subdat_dep$tot_abun+1)))
+  }
   #2. Plot dataset with multiple obs. in depth:
   subdat<-all_dat_depth[all_dat_depth$month>=9 | all_dat_depth$month<=4,] #winter data
   subdat$tot_abun<-subdat[,paste0("C",species,"_abunm3")]
   arcticmap(add=F,map_labels = F,map_grid = F,col="grey")
-  if(species=="gla"){mtext(side=3,"C",adj=0.1,line=-1,font = 2)}
-  if(species=="hyp"){mtext(side=3,"D",adj=0.1,line=-1,font = 2)}
+  if(species=="gla"){mtext(side=3,"C.",adj=0.1,line=-1,font = 2)}
+  if(species=="hyp"){mtext(side=3,"D.",adj=0.1,line=-1,font = 2)}
   for(bot in 1:length(upbot)){ #one column per depth layer
     subdat_dep<-subdat[subdat$depth>=upbot[bot] & subdat$depth<lowbot[bot] & subdat$tot_abun>0,]
     vals<-c(vals,max(log(subdat_dep$tot_abun+1)),min(log(subdat_dep$tot_abun+1)))
     with(mapproject(subdat_dep$lon,subdat_dep$lat,proj_str,parameters=proj_params,orientation=c(90, 0, rotation)),
          points(x,y,pch=21,lwd=0.25,bg=adjustcolor(cols[bot],alpha=0.4),cex=0.3*log(subdat_dep$tot_abun+1)))
   }
-  }
+}
 par(mar=rep(0,4))
 plot(1, type="n",axes=FALSE,xlim=c(0,4),ylim=c(0,10),xlab="",ylab="")
 legend("left",cex=1.5,horiz=TRUE,bty="n",x.intersp=0.4,
@@ -69,7 +69,6 @@ legend("right",cex=1.5,horiz=TRUE,bty="n",x.intersp=0.4,
        legend=format(round(seq(min(vals),max(vals),length=5),1),trim=T),
        col=1,pch=20,pt.cex=0.3*seq(min(vals),max(vals),length=5),
        title=expression(paste("Abundance (log"["e"]*"ind.",m^-3,"+1)")))
-
 
 ###Overlayed barplot of depth distribution in summer/winter (Figs. 2-3)####
 #Divide data based on bottom depth and sampling month
@@ -99,7 +98,7 @@ for (j in 1:length(lifestages_gla)){ #one plot per stage
     if(dim(subdat_sum)[1]>0){
       for(i in 1:dim(subdat_sum)[1]){ 
         rect(0,subdat_sum$lowdep[i],log(subdat_sum[i,paste0(lifestage,"_abunm3_corr")]+1),subdat_sum$updep[i],
-             col=adjustcolor("red",alpha=0.5),border=NA)
+             col=adjustcolor("red",alpha=0.2),border=NA)
       }
     }
     #Plot every winter observation stacked:  
@@ -107,7 +106,7 @@ for (j in 1:length(lifestages_gla)){ #one plot per stage
     if(dim(subdat_win)[1]>0){
       for(i in 1:dim(subdat_win)[1]){ 
         rect(11-log(subdat_win[i,paste0(lifestage,"_abunm3_corr")]+1),subdat_win$lowdep[i],11,subdat_win$updep[i],
-             col=adjustcolor("blue",alpha=0.5),border=NA)
+             col=adjustcolor("blue",alpha=0.2),border=NA)
       }
     }
     rect(0,lowbot[bot],100,5000,col="grey",border=NA) #Bottom depth
@@ -175,33 +174,28 @@ for(species in c("gla","hyp")){
   lifestages_spec<-get(paste0("lifestages_",species))
   labels_spec<-gsub("c","",gsub(species,"",lifestages_spec))
   for(var in c("_wmd","_sd")){
-  meanval_win<-apply(subdat_win[,paste0(lifestages_spec,var)],2,FUN=mean,na.rm=TRUE)
-  meanval_sum<-apply(subdat_sum[,paste0(lifestages_spec,var)],2,FUN=mean,na.rm=TRUE)
-  #Test for significant differences:
-  sign_diff<-unlist(mapply(wilcox.test,subdat_win[,paste0(lifestages_spec,var)],subdat_sum[,paste0(lifestages_spec,var)])[3,])
-  print(paste0(lifestages_spec," Win:",round(meanval_win)," Sum:",round(meanval_sum),
-        " P:",round(sign_diff,3)))
-  sdval_win<-apply(subdat_win[,paste0(lifestages_spec,var)],2,FUN=sd,na.rm=TRUE)
-  sdval_sum<-apply(subdat_sum[,paste0(lifestages_spec,var)],2,FUN=sd,na.rm=TRUE)
-  if(var=="_wmd"){
+    ymin<-(-2500)
+    if(var=="_sd"){ymin<-(-1500)}
+    meanval_win<-apply(subdat_win[,paste0(lifestages_spec,var)],2,FUN=mean,na.rm=TRUE)
+    meanval_sum<-apply(subdat_sum[,paste0(lifestages_spec,var)],2,FUN=mean,na.rm=TRUE)
+    sdval_win<-apply(subdat_win[,paste0(lifestages_spec,var)],2,FUN=sd,na.rm=TRUE)
+    sdval_sum<-apply(subdat_sum[,paste0(lifestages_spec,var)],2,FUN=sd,na.rm=TRUE)
     stripchart(-subdat_win[,paste0(lifestages_spec,var)],method="jitter",jitter=jitter_val,
-               ylim=c(-2500,0),yaxs="i",vertical=TRUE,pch=20,col=adjustcolor("blue",alpha=0.4),
+               ylim=c(ymin,0),yaxs="i",vertical=TRUE,pch=20,col=adjustcolor("blue",alpha=0.3),
                cex=ptsize,lwd=1,axes=FALSE,frame.plot=TRUE)
     stripchart(-subdat_sum[,paste0(lifestages_spec,var)],method="jitter",jitter=jitter_val,
-               vertical=TRUE,pch=20,col=adjustcolor("red",alpha=0.2),cex=ptsize,lwd=1,add=TRUE)
-    if(species=="gla"){Axis(side=2,at=seq(-2000,0,1000),labels=seq(2000,0,-1000))}
-   }else{
-    stripchart(-subdat_win[,paste0(lifestages_spec,var)],method="jitter",ylim=c(-1500,0),yaxs="i",jitter=jitter_val,
-               vertical=TRUE,pch=20,col=adjustcolor("blue",alpha=0.4),cex=ptsize,lwd=1,axes=FALSE,frame.plot=TRUE)
-    stripchart(-subdat_sum[,paste0(lifestages_spec,var)],method="jitter",vertical=TRUE,jitter=jitter_val,
-               pch=20,col=adjustcolor("red",alpha=0.2),cex=ptsize,lwd=1,add=TRUE)
-    if(species=="gla"){Axis(side=2,at=seq(-1000,0,1000),labels=seq(1000,0,-1000))}
-    Axis(side=1,at=1:7,labels=labels_spec)
-  }
-  arrows(0.9:6.9,-(meanval_win+sdval_win),0.9:6.9,-(meanval_win-sdval_win),code=3,length=0.04,angle=90,lwd=1.7) 
-  points(0.9:6.9,-meanval_win,pch=23,cex=1.35,bg="blue",lwd=1.6)
-  arrows(1.1:7.1,-(meanval_sum+sdval_sum),1.1:7.1,-(meanval_sum-sdval_sum),code=3,length=0.04,angle=90,lwd=1.7) 
-  points(1.1:7.1,-meanval_sum,pch=23,cex=1.35,bg="red",lwd=1.6)
+               vertical=TRUE,pch=20,col=adjustcolor("red",alpha=0.3),cex=ptsize,lwd=1,add=TRUE)
+    if(species=="gla"){Axis(side=2,at=seq(ymin+500,0,500),labels=seq(abs(ymin+500),0,-500))}
+    if(var=="_sd"){Axis(side=1,at=1:7,labels=labels_spec)}
+    arrows(0.9:6.9,-(meanval_win+sdval_win),0.9:6.9,-(meanval_win-sdval_win),code=3,length=0.04,angle=90,lwd=1.7) 
+    points(0.9:6.9,-meanval_win,pch=23,cex=1.35,bg="blue",lwd=1.6)
+    arrows(1.1:7.1,-(meanval_sum+sdval_sum),1.1:7.1,-(meanval_sum-sdval_sum),code=3,length=0.04,angle=90,lwd=1.7) 
+    points(1.1:7.1,-meanval_sum,pch=23,cex=1.35,bg="red",lwd=1.6)
+    #Test for significant differences:
+    sign_diff<-unlist(mapply(wilcox.test,subdat_win[,paste0(lifestages_spec,var)],subdat_sum[,paste0(lifestages_spec,var)])[3,])
+    for(x in 1:7){
+      if(sign_diff[x]<0.01){text(x,ymin+200,"*",cex=2)}
+    }
   }
 }
 
@@ -209,6 +203,7 @@ mtext(side=3,bquote(paste(bold(A.)," ",italic("C. glacialis"))),line=0,font=3,ad
 mtext(side=3,bquote(paste(bold(B.)," ",italic("C. hyperboreus"))),line=0,font=3,adj=0.8,outer=TRUE)
 mtext(side=2,"WMD (m)",line=1.25,outer=TRUE,adj=.8)
 mtext(side=2,"SD (m)",line=1.25,outer=TRUE,adj=.2)
+
 
 #Kruskal–Wallis one-way analysis of variance to check for significant differences between stages
 #(Instead of ANOVA because the assumption that the residuals are normally distributed was violated)
@@ -267,16 +262,53 @@ for(i in 1:7){
 }
 
 
+#Test if differences are significant across different winter months (Supp. Fig. 2)
+labels_spec<-gsub("c","",gsub("gla","",lifestages_gla))
+ptsize=0.4
+jitter_val<-0.3
+
+par(mfrow=c(2,4),mar=rep(0,4),oma=c(1.5,2.5,0.25,0.25),mgp=c(3,0.5,0))
+for(month in c(9:12,1:4)){
+  subdat<-depthdat[depthdat$month==month,]  
+  stripchart(-subdat[,paste0(lifestages_gla,"_wmd")],method="jitter",jitter=jitter_val,
+             ylim=c(-2500,0),yaxs="i",vertical=TRUE,pch=20,col=adjustcolor("#1b9e77",alpha=0.5),
+             cex=ptsize,lwd=1,axes=FALSE,frame.plot=TRUE)
+  stripchart(-subdat[,paste0(lifestages_hyp,"_wmd")],method="jitter",jitter=jitter_val,
+             vertical=TRUE,pch=20,col=adjustcolor("#7570b3",alpha=0.5),cex=ptsize,lwd=1,add=TRUE)
+  meanval_gla<-apply(subdat[,paste0(lifestages_gla,"_wmd")],2,FUN=mean,na.rm=TRUE)
+  meanval_hyp<-apply(subdat[,paste0(lifestages_hyp,"_wmd")],2,FUN=mean,na.rm=TRUE)
+  sdval_gla<-apply(subdat[,paste0(lifestages_gla,"_wmd")],2,FUN=sd,na.rm=TRUE)
+  sdval_hyp<-apply(subdat[,paste0(lifestages_hyp,"_wmd")],2,FUN=sd,na.rm=TRUE)
+  arrows(0.9:6.9,-(meanval_gla+sdval_gla),0.9:6.9,-(meanval_gla-sdval_gla),code=3,length=0.04,angle=90) 
+  points(0.9:6.9,-meanval_gla,pch=23,cex=1.25,bg="#1b9e77")
+  arrows(1.1:7.1,-(meanval_hyp+sdval_hyp),1.1:7.1,-(meanval_hyp-sdval_hyp),code=3,length=0.04,angle=90) 
+  points(1.1:7.1,-meanval_hyp,pch=23,cex=1.25,bg="#7570b3")
+  #Test for significant differences between stage-pairs:
+  for(x in 1:7){
+    stage_gla<-subdat[,paste0(lifestages_gla[x],"_wmd")]
+    stage_hyp<-subdat[,paste0(lifestages_hyp[x],"_wmd")]
+    if(length(stage_gla[!is.na(stage_gla)])>1 & length(stage_hyp[!is.na(stage_hyp)])>1){
+      sign_diff<-wilcox.test(stage_gla,stage_hyp)$p.value
+      if(sign_diff<0.01){text(x,-2000,"*",cex=2)}
+    }
+  }
+  if(month%in%c(9,1)){Axis(side=2,at=seq(-2000,0,1000),labels=seq(2000,0,-1000))}
+  if(month%in%c(1:4)){Axis(side=1,at=1:7,labels=labels_spec,cex.axis=0.68)}
+  text(1,-2300,month.abb[month],cex=1.25)
+}
+mtext(side=2,"WMD (m)",line=1.25,outer=TRUE)
+
 ####WMD per day-of-year (Figs. 5/6)####
 last_win<-as.numeric(format(as.Date(paste(4,30,2010), format=c("%m %d %Y")),"%j"))
 first_win<-as.numeric(format(as.Date(paste(9,1,2010), format=c("%m %d %Y")),"%j"))
 xlims<-c(1,365)
 upbot<-c(0,200,400,800)
 lowbot<-c(200,400,800,5000)
+species_name<-c("C. glacialis", "C. hyperboreus");names(species_name)<-c("gla","hyp")
 species<-"gla"
 lifestages_spec<-get(paste0("lifestages_",species))
 
-par(mfcol=c(7,4),mar=c(0.25,1,0.25,1),oma=c(2.5,3.5,1.5,0),mgp=c(3,0.4,0))
+par(mfcol=c(7,4),mar=c(0.25,1,0.25,0.75),oma=c(2.5,3.5,1.5,0),mgp=c(3,0.4,0))
 for(bot in 1:length(upbot)){
   subdat<-depthdat[depthdat$depth>=upbot[bot] & depthdat$depth<lowbot[bot],]
   ylims<-c(-lowbot[bot],0)
@@ -292,20 +324,21 @@ for(bot in 1:length(upbot)){
     maxdep<-subdat[,paste0(stage,"_wmd")]
     min_pres<-subdat[,paste0(stage,"_wmd")]+subdat[,paste0(stage,"_sd")]
     max_pres<-subdat[,paste0(stage,"_wmd")]-subdat[,paste0(stage,"_sd")]
-    plot(subdat$julday,-maxdep,pch=20,cex=0.5,xlim=xlims,ylim=ylims,axes=FALSE,frame=TRUE,xaxs="i",yaxs="i") 
-    segments(subdat$julday,-max_pres,subdat$julday,-min_pres,lwd=0.5) 
+    plot(1, type="n",xlim=xlims,ylim=ylims,axes=FALSE,frame=TRUE,xaxs="i",yaxs="i") 
     #Illustrate winter:
-    rect(-10,min(ylims),last_win,0,col=adjustcolor("blue",alpha.f=0.1),border=NA)
-    rect(first_win,min(ylims),400,0,col=adjustcolor("blue",alpha.f=0.1),border=NA)
+    rect(-10,min(ylims),last_win,0,col=adjustcolor("grey",alpha.f=0.3),border=NA)
+    rect(first_win,min(ylims),400,0,col=adjustcolor("grey",alpha.f=0.3),border=NA)
+    points(subdat$julday,-maxdep,pch=20,cex=0.5) 
+    segments(subdat$julday,-max_pres,subdat$julday,-min_pres,lwd=0.5) 
     Axis(side=2,at=ypos,labels=ylabs)
     if(stage==lifestages_spec[7]){Axis(side=1)}
-    if(bot==1){mtext(side=2,label,line=2.75)}
+    if(bot==1){mtext(side=2,label,line=1.25)}
     if(stage==lifestages_spec[1]){
-   mtext(side=3,bquote(paste(bold(.(LETTERS[bot])),". ",.(upbot[bot]),"-",.(lowbot[bot]),"m")),line=0)}
+      mtext(side=3,bquote(paste(bold(.(LETTERS[bot])),". ",.(upbot[bot]),"-",.(lowbot[bot]),"m")),line=0)}
   }
 }
 mtext(side=1,"Day-of-year",line=1.25,outer=TRUE)
-mtext(side=2,"Depth (m)",line=0.5,outer=TRUE)
+mtext(side=2,bquote(paste(italic(.(species_name[species]))," depth distribution (m)")),line=1.75,outer=TRUE)
 
 ####Relationship between WMD/SD and latitude/bottom depth in winter (Fig. 7, Table 2)####
 subdat<-depthdat[depthdat$month>=9 |depthdat$month<=4,]
@@ -386,8 +419,8 @@ for(species in c("gla","hyp")){
     plot(1,type="n",ylim=ylims,xlim=get(paste0("xlims_",var)),axes=FALSE,frame=TRUE,yaxs="i",xaxs="i") 
     Axis(side=1)
     if(var=="depth" & species=="gla"){Axis(side=2,at=seq(0,-4000,-1000),labels=seq(0,4000,1000))}
-    if(var=="depth"){mtext(side=1,"Bottom depth (m)",line=1.5,adj=0.2,outer=FALSE)}
-    if(var=="lat"){mtext(side=1,"Latitude (°N)",line=1.5,adj=0.75,outer=FALSE)}
+    if(var=="depth"){mtext(side=1,"Bottom depth (m)",line=1.5,adj=0.35,outer=FALSE)}
+    if(var=="lat"){mtext(side=1,"Latitude (°N)",line=1.5,adj=0.6,outer=FALSE)}
     #Plot data points:
     for(i in 1:length(lifestages_spec)){
       subdat_stage<-subdat[!is.na(subdat[,paste0(lifestages_spec[i],"_wmd")])& 
@@ -482,8 +515,8 @@ for(species in c("gla","hyp")){
     plot(1,type="n",ylim=ylims,xlim=get(paste0("xlims_",var)),axes=FALSE,frame=TRUE,yaxs="i",xaxs="i") 
     Axis(side=1)
     if(var=="depth" & species=="gla"){Axis(side=2,at=seq(0,-80,-40),labels=seq(0,80,40))}
-    if(var=="depth"){mtext(side=1,"Bottom depth (m)",line=1.5,adj=0.2,outer=FALSE)}
-    if(var=="lat"){mtext(side=1,"Latitude (°N)",line=1.5,adj=0.75,outer=FALSE)}
+    if(var=="depth"){mtext(side=1,"Bottom depth (m)",line=1.5,adj=0.35,outer=FALSE)}
+    if(var=="lat"){mtext(side=1,"Latitude (°N)",line=1.5,adj=0.6,outer=FALSE)}
     #Plot data points:
     for(i in 1:length(lifestages_spec)){
       subdat_stage<-subdat[!is.na(subdat[,paste0(lifestages_spec[i],"_wmd")])& 
