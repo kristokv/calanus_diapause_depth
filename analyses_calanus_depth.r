@@ -29,18 +29,31 @@ upbot<-c(0,200,400,800)
 lowbot<-c(200,400,800,5000)
 cols<- rev(c("#225ea8","#41b6c4","#a1dab4","#ffffcc"))
 vals<-NULL
+species_name<-c("C. glacialis", "C. hyperboreus");names(species_name)<-c("gla","hyp")
 
-layout(matrix(c(1:2,5,3:5),nrow=3,byrow=FALSE),heights=c(0.45,0.45,0.1))
+#For plotting geographical areas:
+lats<-c(90,75,77,75,70,69,62,69,73,72,50,74,68)
+lons<-c(0,34,75,120,145,180,183,-140,-110,-65,-60,-10,8)
+geo_names<-c("Arctic Ocean","Barents","Kara","Laptev","East Siberian","Chukchi",
+             "Bering","Beaufort","Canadian Archipelago","Baffin Bay","Canadian Atlantic",
+             "Greenland","Norwegian")
+
+layout(matrix(c(1:3,6,1,4:6),nrow=4,byrow=FALSE),
+       heights=c(0.3,0.3,0.3,0.1))
 par(mgp=c(3,0,0),mar=rep(0,4),oma=c(0,0,1,0))
+arcticmap(add=F,map_labels = F,map_grid = F,col="grey")
+#Add labels:
+text(mapproject(lons,lats,proj_str,parameters=proj_params,orientation=c(90, 0, rotation)),
+     geo_names,cex=1.5)
+mtext(side=3,"A.",adj=0.3,line=-1,font = 2)
 for(species in c("gla","hyp")){
   #1. Plot full dataset:
   subdat<-all_dat[all_dat$month>=9 | all_dat$month<=4,] #winter data
   subdat$tot_abun<-subdat[,paste0("C",species,"_abunm3")]
   arcticmap(add=F,map_labels = F,map_grid = F,col="grey")
-  if(species=="gla"){mtext(side=3,"C. glacialis",line=-1,font=3);
-    mtext(side=3,"A.",adj=0.1,line=-1,font = 2)}
-  if(species=="hyp"){mtext(side=3,"C. hyperboreus",line=-1,font=3);
-    mtext(side=3,"B.",adj=0.1,line=-1,font = 2) }
+  mtext(side=3,bquote(paste(italic(.(species_name[species])),": All data")),line=-1.25,font=3)
+  if(species=="gla"){mtext(side=3,"B.",adj=0.08,line=-1,font = 2)}
+  if(species=="hyp"){mtext(side=3,"C.",adj=0.08,line=-1,font = 2)}
   for(bot in 1:length(upbot)){ #one column per depth layer
     subdat_dep<-subdat[subdat$depth>=upbot[bot] & subdat$depth<lowbot[bot] & subdat$tot_abun>0,]
     vals<-c(vals,range(log(subdat_dep$tot_abun+1)))
@@ -51,8 +64,9 @@ for(species in c("gla","hyp")){
   subdat<-all_dat_depth[all_dat_depth$month>=9 | all_dat_depth$month<=4,] #winter data
   subdat$tot_abun<-subdat[,paste0("C",species,"_abunm3")]
   arcticmap(add=F,map_labels = F,map_grid = F,col="grey")
-  if(species=="gla"){mtext(side=3,"C.",adj=0.1,line=-1,font = 2)}
-  if(species=="hyp"){mtext(side=3,"D.",adj=0.1,line=-1,font = 2)}
+  mtext(side=3,bquote(paste(italic(.(species_name[species])),": Multiple depths")),line=-1.25,font=3)
+  if(species=="gla"){mtext(side=3,"D.",adj=0.08,line=-1,font = 2)}
+  if(species=="hyp"){mtext(side=3,"E.",adj=0.08,line=-1,font = 2)}
   for(bot in 1:length(upbot)){ #one column per depth layer
     subdat_dep<-subdat[subdat$depth>=upbot[bot] & subdat$depth<lowbot[bot] & subdat$tot_abun>0,]
     vals<-c(vals,max(log(subdat_dep$tot_abun+1)),min(log(subdat_dep$tot_abun+1)))
@@ -69,6 +83,7 @@ legend("right",cex=1.5,horiz=TRUE,bty="n",x.intersp=0.4,
        legend=format(round(seq(min(vals),max(vals),length=5),1),trim=T),
        col=1,pch=20,pt.cex=0.3*seq(min(vals),max(vals),length=5),
        title=expression(paste("Abundance (log"["e"]*"ind.",m^-3,"+1)")))
+
 
 ###Overlayed barplot of depth distribution in summer/winter (Figs. 2-3)####
 #Divide data based on bottom depth and sampling month
