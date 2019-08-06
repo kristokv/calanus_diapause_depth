@@ -135,7 +135,7 @@ mtext(side=2,"Depth (m)",line=0.5,cex=1,outer=TRUE)
 ####Calculate WMD and SD in depth####
 #Divide data into 50 m depth bins, calculate WMD and SD
 depthdat<-all_dat_depth[!duplicated(all_dat_depth$ID),] #Dataframe with 1 row per station
-depthdat<-depthdat[,-c(13:60)] #Remove unnecessary columns
+depthdat<-depthdat[,-c(14:61)] #Remove unnecessary columns
 depthdat[,paste0(lifestages,"_wmd")]<-NA
 depthdat[,paste0(lifestages,"_sd")]<-NA
 
